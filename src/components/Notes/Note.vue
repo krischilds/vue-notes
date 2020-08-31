@@ -1,9 +1,23 @@
 <template>
   <div class="note">
-    <div class="note-title">{{ note.title }}</div>
-    <div class="note-text">{{ note.text }}</div>
-    <button>Edit</button>
-    <button @click="deleteNote(note.id)">Delete</button>
+    <div v-if="note.state === 'creating'" :class="{'note-creating':note.state === 'creating'}">
+      <div>
+        <div>Title</div>
+        <input ref="title" type="text" name="title" v-model="note.title" />
+      </div>
+      <div>
+        <div>Text</div>
+        <input type="text" name="text" v-model="note.text" />
+      </div>
+      <button @click="discardNote">Discard</button>
+      <button @click="saveNote(note)">Save</button>
+    </div>
+    <div v-if="note.state !== 'creating'">
+      <div class="note-title">{{ note.title }}</div>
+      <div class="note-text">{{ note.text }}</div>
+      <button>Edit</button>
+      <button @click="deleteNote(note.id)">Delete</button>
+    </div>
   </div>
 </template>
 <script>
@@ -15,7 +29,13 @@ export default {
     note: Object,
     deleteNote: {
       type: Function
-    }
+    },
+    saveNote: { type: Function },
+    discardNote: { type: Function }
+  },
+  created() {
+    
+    
   }
 };
 </script>
@@ -35,5 +55,8 @@ export default {
 }
 .note-text {
   text-align: left;
+}
+.note-creating {
+  background: lightgreen;
 }
 </style>

@@ -6,6 +6,7 @@ class NoteModel {
         this.dateModified = "";
         this.dateCreated = "";
         this.author = "";
+        this.state = ""; // creating, viewing, editing, saving
     }
 }
 

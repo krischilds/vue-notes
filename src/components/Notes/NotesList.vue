@@ -2,14 +2,16 @@
   <div>
     <h4>Notes List</h4>
 
+  <a :href="githubUrl">Repo</a>
+
     <div v-if="notes && notes.length">
       <ul>
-        <li v-for="note in sortedArray" :key="note.id">
-          <Note :note="note" :deleteNote="deleteNote" />
+        <li v-for="note in notes" :key="note.id">          
+            <Note :note="note" :saveNote="saveNote" :deleteNote="deleteNote" :discardNote="discardNote" />
         </li>
       </ul>
     </div>
-    <div v-else>No notes exist.</div>
+    <div v-else>No notes found</div>
   </div>
 </template>
 
@@ -21,11 +23,14 @@ export default {
   props: {
     msg: String,
     notes: Array,
-    deleteNote: Function
+    deleteNote: Function,
+    discardNote: Function,
+    saveNote: Function
   },
   data() {
     return {
-      selectedNote: undefined
+      selectedNote: undefined,
+      githubUrl: "https://github.com/krischilds/vue-notes"
     };
   },
   components: {
@@ -35,6 +40,7 @@ export default {
     // this.loadNotes();
   },
   computed: {
+    /*
     sortedArray: function() {
       function compare(a, b) {
         if (a.title < b.title) return -1;
@@ -43,7 +49,6 @@ export default {
       }
 
       if (this.notes) {
-
           let noteSorted = [...this.notes];
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         return noteSorted.sort(compare);
@@ -51,6 +56,7 @@ export default {
         return [];
       }
     }
+    */
   }
 };
 </script>

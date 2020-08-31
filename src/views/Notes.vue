@@ -1,24 +1,27 @@
 <template>
   <div>
     <header>{{ pageTitle }}</header>
-    <button @click="showNote">{{ showNoteText }}</button>
-    <div v-if="showNoteForm">
-      <new-note :createNote="createNote" />
+    <div style="display:flex;justify-content:space-between">
+      <button @click="quickAddNote">Quick Add Note</button>
+      <button @click="showNote">{{ showNoteText }}</button>
     </div>
-    <notes-list :notes="notes" :deleteNote="deleteNote" />
+    <div v-if="showNoteForm">
+      <note-form :saveNote="saveNote" />
+    </div>
+    <notes-list :notes="notes" :discardNote="discardNote" :deleteNote="deleteNote" :saveNote="saveNote"/>
   </div>
 </template>
 
 <script>
 import NotesList from "../components/Notes/NotesList.vue";
-import NewNote from "../components/Notes/NewNote.vue";
-//import NoteModel from "../components/Notes/NoteModel";
+import NoteForm from "../components/Notes/NoteForm.vue";
+import NoteModel from "../components/Notes/NoteModel";
 
 export default {
   name: "Notes",
   components: {
     NotesList,
-    NewNote
+    NoteForm
   },
   data() {
     return {
@@ -30,6 +33,19 @@ export default {
     showNote: function(event) {
       event.preventDefault();
       this.showNoteForm = !this.showNoteForm;
+    },
+    quickAddNote: function() {
+      console.log("Quick Add");
+      let n = new NoteModel();
+      // n.id = 0;
+      n.state = "creating";
+      if (this.notes && this.notes.length) {
+        if (this.notes[0].state !== "creating")
+        this.notes.unshift(n);
+      }
+    },
+    discardNote: function () {
+      this.notes = this.notes.slice(1);
     },
     async loadNotes() {
       console.log("loadNotes");
@@ -51,14 +67,14 @@ export default {
         this.loadNotes();
       }
     },
-    async createNote(note) {
+    async saveNote(note) {
       /*
-      const newNote = new NoteModel();
-      newNote.title = title;
-      newNote.text = text;
-      newNote.author = author;
-      newNote.dateCreated = dateCreated;
-      newNote.dateModified = dateCreated;
+      const NoteForm = new NoteModel();
+      NoteForm.title = title;
+      NoteForm.text = text;
+      NoteForm.author = author;
+      NoteForm.dateCreated = dateCreated;
+      NoteForm.dateModified = dateCreated;
       */
 
       // title, text, author, dateCreated
@@ -73,9 +89,9 @@ export default {
 */
       const n2 = {...note};
       console.log(n2);
-
+      n2.state = "viewing";
       let body = JSON.stringify(n2);
-      console.log("createNote POST BODY");
+      console.log("saveNote POST BODY");
 
       let res = await fetch("http://localhost:3000/notes", {
         headers: {
