@@ -1,17 +1,27 @@
 <template>
   <div>
     <h4>Notes List</h4>
-
-  <a :href="githubUrl">Repo</a>
-
-    <div v-if="notes && notes.length">
-      <ul>
-        <li v-for="note in notes" :key="note.id">          
-            <Note :note="note" :saveNote="saveNote" :deleteNote="deleteNote" :discardNote="discardNote" />
-        </li>
-      </ul>
+    <h5>PAGE STATE : {{ pageState }}</h5>
+    <div style="display:flex">
+      <div v-if="notes && notes.length">
+        <ul>
+          <li v-for="note in sortedNotes" :key="note.id">
+            <Note
+              :note="note"
+              :saveNote="saveNote"
+              :deleteNote="deleteNote"
+              :discardNote="discardNote"
+            />
+          </li>
+        </ul>
+      </div>
+      <div v-else>No notes found</div>
+      <div v-if="pageState === 'create'" style="background:lightyellow">
+        <div id="note-preview-pane">
+          Show Preview Pane Here
+        </div>
+      </div>
     </div>
-    <div v-else>No notes found</div>
   </div>
 </template>
 
@@ -40,23 +50,51 @@ export default {
     // this.loadNotes();
   },
   computed: {
-    /*
-    sortedArray: function() {
-      function compare(a, b) {
-        if (a.title < b.title) return -1;
-        if (a.title > b.title) return 1;
-        return 0;
-      }
+    pageState: function () {
+      let state = "view";
+      if (this.notes) {
+        let creatingNotes = this.notes.filter(note=> {
+          return note.state === 'creating'
+        });
 
+        if (creatingNotes.length > 0) {
+          state = "create"; 
+        } else {
+          state = "view";
+        }
+      }
+      return state;
+    },
+    sortedNotes: function() {
+      function compare(a, b) {
+        let aDate;
+        let bDate;
+ 
+        if (!a.dateCreated || !b.dateCreated) {
+          return 1;
+        }
+
+        try {
+          aDate = new Date(a.dateCreated);
+          bDate = new Date(b.dateCreated);
+        } catch(err) {
+          console.error(err);
+          return 0;
+        }  
+        // console.log(aDate,bDate);
+        return bDate - aDate;
+      }
+      console.log("noteSorted called at " + (new Date()).toISOString()  );
       if (this.notes) {
           let noteSorted = [...this.notes];
+
+          // (this.pageState !== 'view') ? noteSorted : noteSorted.sort(compare);
         // eslint-disable-next-line vue/no-side-effects-in-computed-properties
         return noteSorted.sort(compare);
       } else {
         return [];
       }
     }
-    */
   }
 };
 </script>

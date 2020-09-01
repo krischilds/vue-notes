@@ -39,6 +39,7 @@ export default {
       let n = new NoteModel();
       // n.id = 0;
       n.state = "creating";
+      
       if (this.notes && this.notes.length) {
         if (this.notes[0].state !== "creating")
         this.notes.unshift(n);
@@ -77,21 +78,12 @@ export default {
       NoteForm.dateModified = dateCreated;
       */
 
-      // title, text, author, dateCreated
-      // : encodeURI(text)
-/*
-      const n2 = {
-        title,
-        text,
-        author,
-        dateCreated
-      };
-*/
       const n2 = {...note};
       console.log(n2);
       n2.state = "viewing";
+      n2.dateCreated = new Date();
       let body = JSON.stringify(n2);
-      console.log("saveNote POST BODY");
+      console.log("note",body);
 
       let res = await fetch("http://localhost:3000/notes", {
         headers: {
